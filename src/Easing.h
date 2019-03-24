@@ -34,7 +34,7 @@ enum class EEasingType
 	InOutBack,
 };
 
-struct TITAN_API FEasing
+struct FEasing
 {
 public:
 	#define TWO_PI          (6.28318530717f)

@@ -264,7 +264,7 @@ protected:
 };
 
 UCLASS()
-class TITAN_API UUITween : public UObject
+class UUITween : public UObject
 {
 	GENERATED_BODY()
 
