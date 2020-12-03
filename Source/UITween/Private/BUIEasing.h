@@ -1,7 +1,7 @@
 #pragma once
 
 UENUM()
-enum class EEasingType
+enum class EBUIEasingType
 {
 	Linear,
 	Smoothstep,
@@ -34,44 +34,44 @@ enum class EEasingType
 	InOutBack,
 };
 
-struct FEasing
+struct FBUIEasing
 {
 public:
 	#define TWO_PI          (6.28318530717f)
 
-	static float Ease( EEasingType Type, float time, float duration = 1.0f, float overshootOrAmplitude = 0.1f, float period = 1.0f )
+	static float Ease( EBUIEasingType Type, float time, float duration = 1.0f, float overshootOrAmplitude = 0.1f, float period = 1.0f )
 	{
 		switch ( Type )
 		{
-			case EEasingType::Linear: return Linear( time, duration ); break;
-			case EEasingType::Smoothstep: return Smoothstep( time, 0, duration); break;
-			case EEasingType::InSine: return InSine( time, duration ); break;
-			case EEasingType::OutSine: return OutSine( time, duration ); break;
-			case EEasingType::InOutSine: return InOutSine( time, duration ); break;
-			case EEasingType::InQuad: return InQuad( time, duration ); break;
-			case EEasingType::OutQuad: return OutQuad( time, duration ); break;
-			case EEasingType::InOutQuad: return InOutQuad( time, duration ); break;
-			case EEasingType::InCubic: return InCubic( time, duration ); break;
-			case EEasingType::OutCubic: return OutCubic( time, duration ); break;
-			case EEasingType::InOutCubic: return InOutCubic( time, duration ); break;
-			case EEasingType::InQuart: return InQuart( time, duration ); break;
-			case EEasingType::OutQuart: return OutQuart( time, duration ); break;
-			case EEasingType::InOutQuart: return InOutQuart( time, duration ); break;
-			case EEasingType::InQuint: return InQuint( time, duration ); break;
-			case EEasingType::OutQuint: return OutQuint( time, duration ); break;
-			case EEasingType::InOutQuint: return InOutQuint( time, duration ); break;
-			case EEasingType::InExpo: return InExpo( time, duration ); break;
-			case EEasingType::OutExpo: return OutExpo( time, duration ); break;
-			case EEasingType::InOutExpo: return InOutExpo( time, duration ); break;
-			case EEasingType::InCirc: return InCirc( time, duration ); break;
-			case EEasingType::OutCirc: return OutCirc( time, duration ); break;
-			case EEasingType::InOutCirc: return InOutCirc( time, duration ); break;
-			case EEasingType::InElastic: return InElastic( time, duration, overshootOrAmplitude, period ); break;
-			case EEasingType::OutElastic: return OutElastic( time, duration, overshootOrAmplitude, period ); break;
-			case EEasingType::InOutElastic: return InOutElastic( time, duration, overshootOrAmplitude, period ); break;
-			case EEasingType::InBack: return InBack( time, duration, overshootOrAmplitude, period ); break;
-			case EEasingType::OutBack: return OutBack( time, duration, overshootOrAmplitude, period ); break;
-			case EEasingType::InOutBack: return InOutBack( time, duration, overshootOrAmplitude, period ); break;
+			case EBUIEasingType::Linear: return Linear( time, duration ); break;
+			case EBUIEasingType::Smoothstep: return Smoothstep( time, 0, duration); break;
+			case EBUIEasingType::InSine: return InSine( time, duration ); break;
+			case EBUIEasingType::OutSine: return OutSine( time, duration ); break;
+			case EBUIEasingType::InOutSine: return InOutSine( time, duration ); break;
+			case EBUIEasingType::InQuad: return InQuad( time, duration ); break;
+			case EBUIEasingType::OutQuad: return OutQuad( time, duration ); break;
+			case EBUIEasingType::InOutQuad: return InOutQuad( time, duration ); break;
+			case EBUIEasingType::InCubic: return InCubic( time, duration ); break;
+			case EBUIEasingType::OutCubic: return OutCubic( time, duration ); break;
+			case EBUIEasingType::InOutCubic: return InOutCubic( time, duration ); break;
+			case EBUIEasingType::InQuart: return InQuart( time, duration ); break;
+			case EBUIEasingType::OutQuart: return OutQuart( time, duration ); break;
+			case EBUIEasingType::InOutQuart: return InOutQuart( time, duration ); break;
+			case EBUIEasingType::InQuint: return InQuint( time, duration ); break;
+			case EBUIEasingType::OutQuint: return OutQuint( time, duration ); break;
+			case EBUIEasingType::InOutQuint: return InOutQuint( time, duration ); break;
+			case EBUIEasingType::InExpo: return InExpo( time, duration ); break;
+			case EBUIEasingType::OutExpo: return OutExpo( time, duration ); break;
+			case EBUIEasingType::InOutExpo: return InOutExpo( time, duration ); break;
+			case EBUIEasingType::InCirc: return InCirc( time, duration ); break;
+			case EBUIEasingType::OutCirc: return OutCirc( time, duration ); break;
+			case EBUIEasingType::InOutCirc: return InOutCirc( time, duration ); break;
+			case EBUIEasingType::InElastic: return InElastic( time, duration, overshootOrAmplitude, period ); break;
+			case EBUIEasingType::OutElastic: return OutElastic( time, duration, overshootOrAmplitude, period ); break;
+			case EBUIEasingType::InOutElastic: return InOutElastic( time, duration, overshootOrAmplitude, period ); break;
+			case EBUIEasingType::InBack: return InBack( time, duration, overshootOrAmplitude, period ); break;
+			case EBUIEasingType::OutBack: return OutBack( time, duration, overshootOrAmplitude, period ); break;
+			case EBUIEasingType::InOutBack: return InOutBack( time, duration, overshootOrAmplitude, period ); break;
 		}
 		return 0;
 	}

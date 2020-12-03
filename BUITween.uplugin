@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "BUITween",
+	"Description": "Tweening library for UMG",
+	"Category": "Other",
+	"CreatedBy": "benui",
+	"CreatedByURL": "https://benui.ca/",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": false,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "BUITween",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}

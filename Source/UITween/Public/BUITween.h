@@ -4,20 +4,11 @@
 #include "Components/Image.h"
 #include "Components/Border.h"
 #include "Blueprint/UserWidget.h"
-#include "Easing.h"
-#include "UITween.generated.h"
-
-/*
-// How to use
-UUITween::Create( WeaponButtons[ 0 ], 2.5f )
-	.FromTranslation( FVector2D( 0, 200 ) )
-	.FromColor( FLinearColor( 1, 1, 1, 0 ) )
-	.Easing( EEasingType::InOutCubic )
-	.Begin();
-*/
+#include "../Private/BUIEasing.h"
+#include "BUITween.generated.h"
 
 template<typename T>
-class UITweenProp
+class TBUITweenProp
 {
 public:
 	bool bHasStart = false;
@@ -53,22 +44,28 @@ public:
 
 
 USTRUCT()
-struct FUITweenInstance
+struct FBUITweenInstance
 {
 	GENERATED_BODY()
 
 public:
-	FUITweenInstance() { }
-	FUITweenInstance( UWidget* pInWidget, float InDuration, float InDelay = 0 )
+	FBUITweenInstance() { }
+	FBUITweenInstance( UWidget* pInWidget, float InDuration, float InDelay = 0 )
 		: pWidget( pInWidget )
 		, Duration( InDuration )
 		, Delay( InDelay )
 	{
 		ensure( pInWidget != nullptr );
 	}
-	void Begin()
+	virtual void Begin()
 	{
 		bShouldUpdate = true;
+
+		if ( !pWidget.IsValid() )
+		{
+			UE_LOG( LogTemp, Warning, TEXT( "Trying to start invalid widget" ) );
+			return;
+		}
 
 		// Set all the props to the existng state
 		TranslationProp.OnBegin( pWidget->RenderTransform.Translation );
@@ -96,7 +93,7 @@ public:
 		// Apply the starting conditions, even if we delay
 		Apply( 0 );
 	}
-	void Update( float InDeltaTime, const UObject* WorldContextObject )
+	virtual void Update( float InDeltaTime )
 	{
 		if ( !bShouldUpdate && !bIsComplete )
 		{
@@ -123,11 +120,11 @@ public:
 			bIsComplete = true;
 		}
 
-		const float EasedAlpha = FEasing::Ease( EasingType, Alpha, Duration );
+		const float EasedAlpha = FBUIEasing::Ease( EasingType, Alpha, Duration );
 
 		Apply( EasedAlpha );
 	}
-	void Apply( float EasedAlpha)
+	virtual void Apply( float EasedAlpha)
 	{
 		UWidget* Target = pWidget.Get();
 
@@ -178,64 +175,64 @@ public:
 			Target->SetRenderTransform( CurrentTransform );
 		}
 	}
-	inline bool operator==( const FUITweenInstance& other) const
+	inline bool operator==( const FBUITweenInstance& other) const
 	{
 		return pWidget == other.pWidget;
 	}
 	FORCEINLINE bool IsComplete() const { return bIsComplete; }
 
-	FUITweenInstance& Easing( EEasingType InType )
+	FBUITweenInstance& Easing( EBUIEasingType InType )
 	{
 		EasingType = InType;
 		return *this;
 	}
 
-	FUITweenInstance& ToTranslation( FVector2D InTarget )
+	FBUITweenInstance& ToTranslation( FVector2D InTarget )
 	{
 		//TranslationProp.Set( pWidget->RenderTransform.Translation, InTarget );
 		TranslationProp.SetTarget( InTarget );
 		return *this;
 	}
-	FUITweenInstance& FromTranslation( FVector2D InStart )
+	FBUITweenInstance& FromTranslation( FVector2D InStart )
 	{
 		TranslationProp.SetStart( InStart );
 		return *this;
 	}
 
-	FUITweenInstance& ToScale( FVector2D InTarget )
+	FBUITweenInstance& ToScale( FVector2D InTarget )
 	{
 		ScaleProp.SetTarget( InTarget );
 		return *this;
 	}
-	FUITweenInstance& FromScale( FVector2D InStart )
+	FBUITweenInstance& FromScale( FVector2D InStart )
 	{
 		ScaleProp.SetStart( InStart );
 		return *this;
 	}
 
-	FUITweenInstance& ToOpacity( float InTarget )
+	FBUITweenInstance& ToOpacity( float InTarget )
 	{
 		OpacityProp.SetTarget( InTarget );
 		return *this;
 	}
-	FUITweenInstance& FromOpacity( float InStart )
+	FBUITweenInstance& FromOpacity( float InStart )
 	{
 		OpacityProp.SetStart( InStart );
 		return *this;
 	}
 
-	FUITweenInstance& ToColor( FLinearColor InTarget )
+	FBUITweenInstance& ToColor( FLinearColor InTarget )
 	{
 		ColorProp.SetTarget( InTarget );
 		return *this;
 	}
-	FUITweenInstance& FromColor( FLinearColor InStart )
+	FBUITweenInstance& FromColor( FLinearColor InStart )
 	{
 		ColorProp.SetStart( InStart );
 		return *this;
 	}
 
-	FUITweenInstance& ToReset()
+	FBUITweenInstance& ToReset()
 	{
 		ScaleProp.SetTarget( FVector2D::UnitVector );
 		OpacityProp.SetTarget( 1 );
@@ -250,32 +247,38 @@ protected:
 	bool bShouldUpdate = false;
 	bool bIsComplete = false;
 
+	TWeakObjectPtr<UWidget> pWidget = nullptr;
 	float Alpha = 0;
 	float Duration = 1;
 	float Delay = 0;
-	TWeakObjectPtr<UWidget> pWidget = nullptr;
 
-	EEasingType EasingType = EEasingType::InOutQuad;
+	EBUIEasingType EasingType = EBUIEasingType::InOutQuad;
 
-	UITweenProp<FVector2D> TranslationProp;
-	UITweenProp<FVector2D> ScaleProp;
-	UITweenProp<FLinearColor> ColorProp;
-	UITweenProp<float> OpacityProp;
+	TBUITweenProp<FVector2D> TranslationProp;
+	TBUITweenProp<FVector2D> ScaleProp;
+	TBUITweenProp<FLinearColor> ColorProp;
+	TBUITweenProp<float> OpacityProp;
 };
 
 UCLASS()
-class UUITween : public UObject
+class BUITWEEN_API UBUITween : public UObject
 {
 	GENERATED_BODY()
 
 public:
-	static void Initialize();
+	static void Startup();
+	static void Shutdown();
 
-	static FUITweenInstance& Create( UWidget* pInWidget, float InDuration = 1.0f, float InDelay = 0.0f, bool bIsAdditive = false );
+	// Create a new tween on the target widget, does not start automatically
+	static FBUITweenInstance& Create( UWidget* pInWidget, float InDuration = 1.0f, float InDelay = 0.0f, bool bIsAdditive = false );
+
+	// Cancel all tweens on the target widget, returns the number of tween instances removed
 	static int32 Clear( UWidget* pInWidget );
 
-	static void Update( float InDeltaTime, const UObject* WorldContextObject );
+	static void Update( float InDeltaTime );
 
 protected:
-	static TArray< FUITweenInstance > ActiveInstances;
+	static bool bIsInitialized;
+
+	static TArray< FBUITweenInstance > ActiveInstances;
 };

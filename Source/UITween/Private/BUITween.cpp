@@ -1,14 +1,23 @@
-#include "UITween.h"
+#include "BUITween.h"
 
-TArray< FUITweenInstance > UUITween::ActiveInstances = TArray< FUITweenInstance >();
+TArray< FBUITweenInstance > UBUITween::ActiveInstances = TArray< FBUITweenInstance >();
+bool UBUITween::bIsInitialized = false;
 
-void UUITween::Initialize()
+void UBUITween::Startup()
 {
+	bIsInitialized = true;
 	ActiveInstances.Empty();
 }
 
 
-FUITweenInstance& UUITween::Create( UWidget* pInWidget, float InDuration, float InDelay, bool bIsAdditive )
+void UBUITween::Shutdown()
+{
+	ActiveInstances.Empty();
+	bIsInitialized = false;
+}
+
+
+FBUITweenInstance& UBUITween::Create( UWidget* pInWidget, float InDuration, float InDelay, bool bIsAdditive )
 {
 	// By default let's kill any existing tweens 
 	if ( !bIsAdditive )
@@ -16,7 +25,7 @@ FUITweenInstance& UUITween::Create( UWidget* pInWidget, float InDuration, float 
 		Clear( pInWidget );
 	}
 
-	FUITweenInstance Instance( pInWidget, InDuration, InDelay );
+	FBUITweenInstance Instance( pInWidget, InDuration, InDelay );
 
 	ActiveInstances.Add( Instance );
 
@@ -24,7 +33,7 @@ FUITweenInstance& UUITween::Create( UWidget* pInWidget, float InDuration, float 
 }
 
 
-int32 UUITween::Clear( UWidget* pInWidget )
+int32 UBUITween::Clear( UWidget* pInWidget )
 {
 	int32 NumRemoved = 0;
 	for ( int32 i = ActiveInstances.Num() - 1; i >= 0; --i )
@@ -39,13 +48,13 @@ int32 UUITween::Clear( UWidget* pInWidget )
 }
 
 
-void UUITween::Update( float InDeltaTime, const UObject* WorldContextObject )
+void UBUITween::Update( float InDeltaTime )
 {
 	// Reverse it so we can remove
 	for ( int32 i = ActiveInstances.Num()-1; i >= 0; --i )
 	{
-		FUITweenInstance& Inst = ActiveInstances[ i ];
-		Inst.Update( InDeltaTime, WorldContextObject );
+		FBUITweenInstance& Inst = ActiveInstances[ i ];
+		Inst.Update( InDeltaTime  );
 		if ( Inst.IsComplete() )
 		{
 			ActiveInstances.RemoveAt( i );
