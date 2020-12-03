@@ -3,9 +3,13 @@
 #include "Components/Widget.h"
 #include "Components/Image.h"
 #include "Components/Border.h"
+#include "Components/CanvasPanelSlot.h"
+#include "Components/Sizebox.h"
 #include "Blueprint/UserWidget.h"
 #include "../Private/BUIEasing.h"
 #include "BUITween.generated.h"
+
+DECLARE_DELEGATE_OneParam( FBUITweenSignature, UWidget* /*Owner*/ );
 
 template<typename T>
 class TBUITweenProp
@@ -17,6 +21,7 @@ public:
 	T StartValue;
 	T TargetValue;
 	T CurrentValue;
+	bool bIsFirstTime = true;
 	void SetStart( T InStart )
 	{
 		bHasStart = true;
@@ -36,9 +41,60 @@ public:
 			CurrentValue = InCurrentValue;
 		}
 	}
-	void Update( float Alpha )
+	bool Update( float Alpha )
 	{
+		const T OldValue = CurrentValue;
 		CurrentValue = FMath::Lerp<T>( StartValue, TargetValue, Alpha );
+		const bool bShouldUpdate = bIsFirstTime || CurrentValue != OldValue;
+		bIsFirstTime = false;
+		return bShouldUpdate;
+	}
+};
+
+template<typename T>
+class TBUITweenInstantProp
+{
+public:
+	bool bHasStart = false;
+	bool bHasTarget = false;
+	inline bool IsSet() const { return bHasStart || bHasTarget; }
+	T StartValue;
+	T TargetValue;
+	T CurrentValue;
+	bool bIsFirstTime = true;
+	void SetStart( T InStart )
+	{
+		bHasStart = true;
+		StartValue = InStart;
+		CurrentValue = StartValue;
+	}
+	void SetTarget( T InTarget )
+	{
+		bHasTarget = true;
+		TargetValue = InTarget;
+	}
+	void OnBegin( T InCurrentValue )
+	{
+		if ( !bHasStart )
+		{
+			StartValue = InCurrentValue;
+			CurrentValue = InCurrentValue;
+		}
+	}
+	bool Update( float Alpha )
+	{
+		const T OldValue = CurrentValue;
+		if ( Alpha >= 1 && bHasTarget )
+		{
+			CurrentValue = TargetValue;
+		}
+		else
+		{
+			CurrentValue = StartValue;
+		}
+		const bool bShouldChange = bIsFirstTime || OldValue != CurrentValue;
+		bIsFirstTime = false;
+		return bShouldChange;
 	}
 };
 
@@ -57,9 +113,11 @@ public:
 	{
 		ensure( pInWidget != nullptr );
 	}
-	virtual void Begin()
+	void Begin()
 	{
 		bShouldUpdate = true;
+		bHasPlayedStartEvent = false;
+		bHasPlayedCompleteEvent = false;
 
 		if ( !pWidget.IsValid() )
 		{
@@ -93,7 +151,7 @@ public:
 		// Apply the starting conditions, even if we delay
 		Apply( 0 );
 	}
-	virtual void Update( float InDeltaTime )
+	void Update( float InDeltaTime )
 	{
 		if ( !bShouldUpdate && !bIsComplete )
 		{
@@ -112,6 +170,12 @@ public:
 			return;
 		}
 
+		if ( !bHasPlayedStartEvent )
+		{
+			OnStartedDelegate.ExecuteIfBound( pWidget.Get() );
+			bHasPlayedStartEvent = true;
+		}
+
 		// Tween each thingy
 		Alpha += InDeltaTime;
 		if ( Alpha >= Duration )
@@ -120,11 +184,13 @@ public:
 			bIsComplete = true;
 		}
 
-		const float EasedAlpha = FBUIEasing::Ease( EasingType, Alpha, Duration );
+		const float EasedAlpha = EasingParam.IsSet()
+			? FBUIEasing::Ease( EasingType, Alpha, Duration, EasingParam.GetValue() )
+			: FBUIEasing::Ease( EasingType, Alpha, Duration );
 
 		Apply( EasedAlpha );
 	}
-	virtual void Apply( float EasedAlpha)
+	void Apply( float EasedAlpha )
 	{
 		UWidget* Target = pWidget.Get();
 
@@ -154,6 +220,15 @@ public:
 			Target->SetRenderOpacity( OpacityProp.CurrentValue );
 		}
 
+		// Only apply visibility changes at 0 or 1
+		if ( VisibilityProp.IsSet() )
+		{
+			if ( VisibilityProp.Update( EasedAlpha ) )
+			{
+				Target->SetVisibility( VisibilityProp.CurrentValue );
+			}
+		}
+
 		bool bChangedRenderTransform = false;
 		FWidgetTransform CurrentTransform = Target->RenderTransform;
 
@@ -169,6 +244,23 @@ public:
 			CurrentTransform.Scale = ScaleProp.CurrentValue;
 			bChangedRenderTransform = true;
 		}
+		if ( RotationProp.IsSet() )
+		{
+			if ( RotationProp.Update( EasedAlpha ) )
+			{
+				CurrentTransform.Angle = RotationProp.CurrentValue;
+				bChangedRenderTransform = true;
+			}
+		}
+		if ( CanvasPositionProp.IsSet() )
+		{
+			if ( CanvasPositionProp.Update( EasedAlpha ) )
+			{
+				UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>( pWidget->Slot );
+				if ( CanvasSlot )
+					CanvasSlot->SetPosition( CanvasPositionProp.CurrentValue );
+			}
+		}
 
 		if ( bChangedRenderTransform )
 		{
@@ -181,30 +273,31 @@ public:
 	}
 	FORCEINLINE bool IsComplete() const { return bIsComplete; }
 
-	FBUITweenInstance& Easing( EBUIEasingType InType )
+	// EasingParam is used for easing functions that have a second parameter, like Elastic
+	FBUITweenInstance& Easing( EBUIEasingType InType, TOptional<float> InEasingParam = TOptional<float>() )
 	{
 		EasingType = InType;
+		EasingParam = InEasingParam;
 		return *this;
 	}
 
-	FBUITweenInstance& ToTranslation( FVector2D InTarget )
+	FBUITweenInstance& ToTranslation( const FVector2D& InTarget )
 	{
-		//TranslationProp.Set( pWidget->RenderTransform.Translation, InTarget );
 		TranslationProp.SetTarget( InTarget );
 		return *this;
 	}
-	FBUITweenInstance& FromTranslation( FVector2D InStart )
+	FBUITweenInstance& FromTranslation( const FVector2D& InStart )
 	{
 		TranslationProp.SetStart( InStart );
 		return *this;
 	}
 
-	FBUITweenInstance& ToScale( FVector2D InTarget )
+	FBUITweenInstance& ToScale( const FVector2D& InTarget )
 	{
 		ScaleProp.SetTarget( InTarget );
 		return *this;
 	}
-	FBUITweenInstance& FromScale( FVector2D InStart )
+	FBUITweenInstance& FromScale( const FVector2D& InStart )
 	{
 		ScaleProp.SetStart( InStart );
 		return *this;
@@ -221,14 +314,69 @@ public:
 		return *this;
 	}
 
-	FBUITweenInstance& ToColor( FLinearColor InTarget )
+	FBUITweenInstance& ToColor( const FLinearColor& InTarget )
 	{
 		ColorProp.SetTarget( InTarget );
 		return *this;
 	}
-	FBUITweenInstance& FromColor( FLinearColor InStart )
+	FBUITweenInstance& FromColor( const FLinearColor& InStart )
 	{
 		ColorProp.SetStart( InStart );
+		return *this;
+	}
+
+	FBUITweenInstance& ToRotation( float InTarget )
+	{
+		RotationProp.SetTarget( InTarget );
+		return *this;
+	}
+	FBUITweenInstance& FromRotation( float InStart )
+	{
+		RotationProp.SetStart( InStart );
+		return *this;
+	}
+
+	FBUITweenInstance& ToMaxDesiredHeight( float InTarget )
+	{
+		MaxDesiredHeightProp.SetTarget( InTarget );
+		return *this;
+	}
+	FBUITweenInstance& FromMaxDesiredHeight( float InStart )
+	{
+		MaxDesiredHeightProp.SetStart( InStart );
+		return *this;
+	}
+
+	FBUITweenInstance& ToCanvasPosition( FVector2D InTarget )
+	{
+		CanvasPositionProp.SetTarget( InTarget );
+		return *this;
+	}
+	FBUITweenInstance& FromCanvasPosition( FVector2D InStart )
+	{
+		CanvasPositionProp.SetStart( InStart );
+		return *this;
+	}
+
+	FBUITweenInstance& ToVisibility( ESlateVisibility InTarget )
+	{
+		VisibilityProp.SetTarget( InTarget );
+		return *this;
+	}
+	FBUITweenInstance& FromVisibility( ESlateVisibility InStart )
+	{
+		VisibilityProp.SetStart( InStart );
+		return *this;
+	}
+
+	FBUITweenInstance& OnStart( const FBUITweenSignature& InOnStart )
+	{
+		OnStartedDelegate = InOnStart;
+		return *this;
+	}
+	FBUITweenInstance& OnComplete( const FBUITweenSignature& InOnComplete )
+	{
+		OnCompleteDelegate = InOnComplete;
 		return *this;
 	}
 
@@ -238,10 +386,20 @@ public:
 		OpacityProp.SetTarget( 1 );
 		TranslationProp.SetTarget( FVector2D::ZeroVector );
 		ColorProp.SetTarget( FLinearColor::White );
+		RotationProp.SetTarget( 0 );
 		return *this;
 	}
 
 	TWeakObjectPtr<UWidget> GetWidget() const { return pWidget; }
+
+	void DoCompleteCleanup()
+	{
+		if ( !bHasPlayedCompleteEvent )
+		{
+			OnCompleteDelegate.ExecuteIfBound( pWidget.Get() );
+			bHasPlayedCompleteEvent = true;
+		}
+	}
 
 protected:
 	bool bShouldUpdate = false;
@@ -253,11 +411,22 @@ protected:
 	float Delay = 0;
 
 	EBUIEasingType EasingType = EBUIEasingType::InOutQuad;
+	TOptional<float> EasingParam;
 
 	TBUITweenProp<FVector2D> TranslationProp;
 	TBUITweenProp<FVector2D> ScaleProp;
 	TBUITweenProp<FLinearColor> ColorProp;
 	TBUITweenProp<float> OpacityProp;
+	TBUITweenProp<float> RotationProp;
+	TBUITweenProp<FVector2D> CanvasPositionProp;
+	TBUITweenInstantProp<ESlateVisibility> VisibilityProp;
+	TBUITweenProp<float> MaxDesiredHeightProp;
+
+	FBUITweenSignature OnStartedDelegate;
+	FBUITweenSignature OnCompleteDelegate;
+
+	bool bHasPlayedStartEvent = false;
+	bool bHasPlayedCompleteEvent = false;
 };
 
 UCLASS()
@@ -277,8 +446,13 @@ public:
 
 	static void Update( float InDeltaTime );
 
+	static bool GetIsTweening( UWidget* pInWidget );
+
 protected:
 	static bool bIsInitialized;
 
 	static TArray< FBUITweenInstance > ActiveInstances;
+
+	// We delay adding until the end of an update so we don't add to ActiveInstances within our update loop
+	static TArray< FBUITweenInstance > InstancesToAdd;
 };

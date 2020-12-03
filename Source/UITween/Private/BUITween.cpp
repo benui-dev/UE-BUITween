@@ -1,18 +1,21 @@
 #include "BUITween.h"
 
 TArray< FBUITweenInstance > UBUITween::ActiveInstances = TArray< FBUITweenInstance >();
+TArray< FBUITweenInstance > UBUITween::InstancesToAdd = TArray< FBUITweenInstance >();
 bool UBUITween::bIsInitialized = false;
 
 void UBUITween::Startup()
 {
 	bIsInitialized = true;
 	ActiveInstances.Empty();
+	InstancesToAdd.Empty();
 }
 
 
 void UBUITween::Shutdown()
 {
 	ActiveInstances.Empty();
+	InstancesToAdd.Empty();
 	bIsInitialized = false;
 }
 
@@ -27,9 +30,9 @@ FBUITweenInstance& UBUITween::Create( UWidget* pInWidget, float InDuration, floa
 
 	FBUITweenInstance Instance( pInWidget, InDuration, InDelay );
 
-	ActiveInstances.Add( Instance );
+	InstancesToAdd.Add( Instance );
 
-	return ActiveInstances.Last();
+	return InstancesToAdd.Last();
 }
 
 
@@ -48,6 +51,7 @@ int32 UBUITween::Clear( UWidget* pInWidget )
 }
 
 
+
 void UBUITween::Update( float InDeltaTime )
 {
 	// Reverse it so we can remove
@@ -57,7 +61,32 @@ void UBUITween::Update( float InDeltaTime )
 		Inst.Update( InDeltaTime  );
 		if ( Inst.IsComplete() )
 		{
+			FBUITweenInstance CompleteInst = Inst;
 			ActiveInstances.RemoveAt( i );
+
+			// We do this here outside of the instance update and after removing from active instances because we
+			// don't know if the callback in the cleanup is going to trigger adding more events
+			CompleteInst.DoCompleteCleanup();
 		}
 	}
+
+	for ( int32 i = 0; i < InstancesToAdd.Num(); ++i )
+	{
+		ActiveInstances.Add( InstancesToAdd[ i ] );
+	}
+	InstancesToAdd.Empty();
 }
+
+
+bool UBUITween::GetIsTweening( UWidget* pInWidget )
+{
+	for ( int32 i = 0; i < ActiveInstances.Num(); ++i )
+	{
+		if ( ActiveInstances[ i ].GetWidget() == pInWidget )
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
