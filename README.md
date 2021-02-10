@@ -68,6 +68,6 @@ simultaneously.
 
 ## Contact
 
-If you find it useful, drop me a line [@_benui](https://twitter.com/_benui on Twitter)
+If you find it useful, drop me a line [@_benui](https://twitter.com/_benui) on Twitter
 
 [benui.ca](https://benui.ca)
