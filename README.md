@@ -58,9 +58,8 @@ For the full API, check the source code.
 
 ## Caveats
 
-I haven't performance-tested it beyond having 5-6 tweens running
-simultaneously.
-
+* I haven't performance-tested it beyond having 5-6 tweens running simultaneously.
+* No Blueprint support.
 
 ## License
 
