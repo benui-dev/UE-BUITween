@@ -46,8 +46,8 @@ Parameters available:
 UBUITween::Create( MyWidget, 0.5f )
 	.FromRotation( -90 )
 	.ToRotation( 45 )
-	.OnComplete( FBUITweenCompleteSignature::CreateLambda([]( UWidget* Owner ) {
-		// Broadcast something
+	.OnComplete( FBUITweenSignature::CreateLambda([]( UWidget* Owner ) {
+		// Do some logic on complete
 	} ) )
 	.Begin();
 ```
