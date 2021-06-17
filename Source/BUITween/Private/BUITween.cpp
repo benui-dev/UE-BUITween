@@ -89,3 +89,11 @@ bool UBUITween::GetIsTweening( UWidget* pInWidget )
 	return false;
 }
 
+
+void UBUITween::CompleteAll()
+{
+	// Very hacky way to make sure all Tweens complete immediately.
+	// First Update clears ActiveTweens, second clears "InstancesToAdd".
+	Update( 100000 );
+	Update( 100000 );
+}

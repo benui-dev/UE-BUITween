@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Private/BUIEasing.h"
+#include "BUIEasing.h"
 #include "Components/Widget.h"
 #include "BUITweenInstance.generated.h"
 
@@ -131,9 +131,19 @@ public:
 		TranslationProp.SetTarget( InTarget );
 		return *this;
 	}
+	FBUITweenInstance& ToTranslation( float X, float Y )
+	{
+		TranslationProp.SetTarget( FVector2D( X, Y ) );
+		return *this;
+	}
 	FBUITweenInstance& FromTranslation( const FVector2D& InStart )
 	{
 		TranslationProp.SetStart( InStart );
+		return *this;
+	}
+	FBUITweenInstance& FromTranslation( float X, float Y )
+	{
+		TranslationProp.SetStart( FVector2D( X, Y ) );
 		return *this;
 	}
 

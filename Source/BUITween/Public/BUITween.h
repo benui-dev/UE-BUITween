@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Private/BUIEasing.h"
+#include "BUIEasing.h"
 #include "Components/Widget.h"
 #include "BUITweenInstance.h"
 #include "BUITween.generated.h"
@@ -23,6 +23,8 @@ public:
 	static void Update( float InDeltaTime );
 
 	static bool GetIsTweening( UWidget* pInWidget );
+
+	static void CompleteAll();
 
 protected:
 	static bool bIsInitialized;
