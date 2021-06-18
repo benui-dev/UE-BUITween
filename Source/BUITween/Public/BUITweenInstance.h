@@ -107,6 +107,7 @@ public:
 		, Delay( InDelay )
 	{
 		ensure( pInWidget != nullptr );
+
 	}
 	void Begin();
 	void Update( float InDeltaTime );
@@ -213,6 +214,18 @@ public:
 		return *this;
 	}
 
+	FBUITweenInstance& ToPadding( const FMargin& InTarget )
+	{
+		PaddingProp.SetTarget( FVector4( InTarget.Left, InTarget.Top, InTarget.Right, InTarget.Bottom ) );
+		return *this;
+	}
+	FBUITweenInstance& FromPadding( const FMargin& InStart )
+	{
+		PaddingProp.SetStart( FVector4( InStart.Left, InStart.Top, InStart.Right, InStart.Bottom ) );
+		return *this;
+	}
+
+
 	FBUITweenInstance& ToVisibility( ESlateVisibility InTarget )
 	{
 		VisibilityProp.SetTarget( InTarget );
@@ -274,6 +287,7 @@ protected:
 	TBUITweenProp<float> OpacityProp;
 	TBUITweenProp<float> RotationProp;
 	TBUITweenProp<FVector2D> CanvasPositionProp;
+	TBUITweenProp<FVector4> PaddingProp; // FVector4 because FMath::Lerp does not support FMargin
 	TBUITweenInstantProp<ESlateVisibility> VisibilityProp;
 	TBUITweenProp<float> MaxDesiredHeightProp;
 

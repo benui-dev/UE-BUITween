@@ -4,6 +4,7 @@
 #include "Components/Image.h"
 #include "Components/Border.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Components/OverlaySlot.h"
 #include "Components/Sizebox.h"
 #include "Blueprint/UserWidget.h"
 
@@ -41,6 +42,23 @@ void FBUITweenInstance::Begin()
 		{
 			ColorProp.OnBegin( Border->ContentColorAndOpacity );
 		}
+	}
+
+	VisibilityProp.OnBegin( pWidget->GetVisibility() );
+
+	UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>( pWidget->Slot );
+	if ( CanvasSlot )
+	{
+		CanvasPositionProp.OnBegin( CanvasSlot->GetPosition() );
+	}
+	UOverlaySlot* OverlaySlot = Cast<UOverlaySlot>( pWidget->Slot );
+	if ( OverlaySlot )
+	{
+		PaddingProp.OnBegin( FVector4(
+			OverlaySlot->Padding.Left,
+			OverlaySlot->Padding.Top,
+			OverlaySlot->Padding.Bottom,
+			OverlaySlot->Padding.Right ) );
 	}
 
 	// Apply the starting conditions, even if we delay
@@ -156,6 +174,15 @@ void FBUITweenInstance::Apply( float EasedAlpha )
 			UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>( pWidget->Slot );
 			if ( CanvasSlot )
 				CanvasSlot->SetPosition( CanvasPositionProp.CurrentValue );
+		}
+	}
+	if ( PaddingProp.IsSet() )
+	{
+		if ( PaddingProp.Update( EasedAlpha ) )
+		{
+			UOverlaySlot* OverlaySlot = Cast<UOverlaySlot>( pWidget->Slot );
+			if ( OverlaySlot )
+				OverlaySlot->SetPadding( PaddingProp.CurrentValue );
 		}
 	}
 
