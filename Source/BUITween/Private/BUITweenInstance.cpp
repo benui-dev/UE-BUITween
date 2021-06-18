@@ -5,6 +5,8 @@
 #include "Components/Border.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/OverlaySlot.h"
+#include "Components/VerticalBoxSlot.h"
+#include "Components/HorizontalBoxSlot.h"
 #include "Components/Sizebox.h"
 #include "Blueprint/UserWidget.h"
 
@@ -52,6 +54,8 @@ void FBUITweenInstance::Begin()
 		CanvasPositionProp.OnBegin( CanvasSlot->GetPosition() );
 	}
 	UOverlaySlot* OverlaySlot = Cast<UOverlaySlot>( pWidget->Slot );
+	UHorizontalBoxSlot* HorizontalBoxSlot = Cast<UHorizontalBoxSlot>( pWidget->Slot );
+	UVerticalBoxSlot* VerticalBoxSlot = Cast<UVerticalBoxSlot>( pWidget->Slot );
 	if ( OverlaySlot )
 	{
 		PaddingProp.OnBegin( FVector4(
@@ -60,6 +64,23 @@ void FBUITweenInstance::Begin()
 			OverlaySlot->Padding.Bottom,
 			OverlaySlot->Padding.Right ) );
 	}
+	else if ( HorizontalBoxSlot )
+	{
+		PaddingProp.OnBegin( FVector4(
+			HorizontalBoxSlot->Padding.Left,
+			HorizontalBoxSlot->Padding.Top,
+			HorizontalBoxSlot->Padding.Bottom,
+			HorizontalBoxSlot->Padding.Right ) );
+	}
+	else if ( VerticalBoxSlot )
+	{
+		PaddingProp.OnBegin( FVector4(
+			VerticalBoxSlot->Padding.Left,
+			VerticalBoxSlot->Padding.Top,
+			VerticalBoxSlot->Padding.Bottom,
+			VerticalBoxSlot->Padding.Right ) );
+	}
+
 
 	// Apply the starting conditions, even if we delay
 	Apply( 0 );
@@ -181,8 +202,14 @@ void FBUITweenInstance::Apply( float EasedAlpha )
 		if ( PaddingProp.Update( EasedAlpha ) )
 		{
 			UOverlaySlot* OverlaySlot = Cast<UOverlaySlot>( pWidget->Slot );
+			UHorizontalBoxSlot* HorizontalBoxSlot = Cast<UHorizontalBoxSlot>( pWidget->Slot );
+			UVerticalBoxSlot* VerticalBoxSlot = Cast<UVerticalBoxSlot>( pWidget->Slot );
 			if ( OverlaySlot )
 				OverlaySlot->SetPadding( PaddingProp.CurrentValue );
+			else if ( HorizontalBoxSlot )
+				HorizontalBoxSlot->SetPadding( PaddingProp.CurrentValue );
+			else if ( VerticalBoxSlot )
+				VerticalBoxSlot->SetPadding( PaddingProp.CurrentValue );
 		}
 	}
 
