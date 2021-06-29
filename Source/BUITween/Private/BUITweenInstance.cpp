@@ -81,6 +81,11 @@ void FBUITweenInstance::Begin()
 			VerticalBoxSlot->Padding.Right ) );
 	}
 
+	USizeBox* SizeBox = Cast<USizeBox>( pWidget );
+	if ( SizeBox )
+	{
+		MaxDesiredHeightProp.OnBegin( SizeBox->MaxDesiredHeight );
+	}
 
 	// Apply the starting conditions, even if we delay
 	Apply( 0 );
@@ -210,6 +215,17 @@ void FBUITweenInstance::Apply( float EasedAlpha )
 				HorizontalBoxSlot->SetPadding( PaddingProp.CurrentValue );
 			else if ( VerticalBoxSlot )
 				VerticalBoxSlot->SetPadding( PaddingProp.CurrentValue );
+		}
+	}
+	if ( MaxDesiredHeightProp.IsSet() )
+	{
+		if ( MaxDesiredHeightProp.Update( EasedAlpha ) )
+		{
+			USizeBox* SizeBox = Cast<USizeBox>( pWidget );
+			if ( SizeBox )
+			{
+				SizeBox->SetMaxDesiredHeight( MaxDesiredHeightProp.CurrentValue );
+			}
 		}
 	}
 
