@@ -1,5 +1,8 @@
 #pragma once
 
+#include "CoreMinimal.h"
+#include "CoreUObject.h"
+
 UENUM()
 enum class EBUIEasingType
 {
