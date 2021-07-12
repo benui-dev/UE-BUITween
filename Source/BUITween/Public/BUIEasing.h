@@ -107,101 +107,132 @@ public:
 
 	static float InQuad( float time, float duration = 1.0 )
 	{
-		return ( time /= duration ) * time;
+		time /= duration;
+		return time * time;
 	}
 
 	static float OutQuad( float time, float duration = 1.0f )
 	{
-		return -( time /= duration ) * ( time - 2 );
+		time /= duration;
+		return -time * ( time - 2 );
 	}
 
 	static float InOutQuad( float time, float duration = 1.0f )
 	{
-		if ( ( time /= duration * 0.5f ) < 1 ) return 0.5f * time * time;
-		return -0.5f * ( ( --time ) * ( time - 2 ) - 1 );
+		time /= duration * 0.5f;
+		if ( time < 1 )
+			return 0.5f * time * time;
+		--time;
+		return -0.5f * ( time * ( time - 2 ) - 1 );
 	}
 
 	static float InCubic( float time, float duration = 1.0f )
 	{
-		return ( time /= duration ) * time * time;
+		time /= duration;
+		return time * time * time;
 	}
 
 	static float OutCubic( float time, float duration = 1.0f )
 	{
-		return ( ( time = time / duration - 1 ) * time * time + 1 );
+		time = time / duration - 1;
+		return ( time * time * time + 1 );
 	}
 
 	static float InOutCubic( float time, float duration = 1.0f )
 	{
-		if ( ( time /= duration * 0.5f ) < 1 ) return 0.5f * time * time * time;
-		return 0.5f * ( ( time -= 2 ) * time * time + 2 );
+		time /= duration * 0.5f;
+		if ( time < 1 )
+			return 0.5f * time * time * time;
+		time -= 2;
+		return 0.5f * ( time * time * time + 2 );
 	}
 
 	static float InQuart( float time, float duration = 1.0f )
 	{
-		return ( time /= duration ) * time * time * time;
+		time /= duration;
+		return time * time * time * time;
 	}
 
 	static float OutQuart( float time, float duration = 1.0f )
 	{
-		return -( ( time = time / duration - 1 ) * time * time * time - 1 );
+		time = time / duration - 1;
+		return -( time * time * time * time - 1 );
 	}
 
 	static float InOutQuart( float time, float duration = 1.0f )
 	{
-		if ( ( time /= duration * 0.5f ) < 1 ) return 0.5f * time * time * time * time;
-		return -0.5f * ( ( time -= 2 ) * time * time * time - 2 );
+		time /= duration * 0.5f;
+		if ( time < 1 )
+			return 0.5f * time * time * time * time;
+		time -= 2;
+		return -0.5f * ( time * time * time * time - 2 );
 	}
 
 	static float InQuint( float time, float duration = 1.0f )
 	{
-		return ( time /= duration ) * time * time * time * time;
+		time /= duration;
+		return time * time * time * time * time;
 	}
 
 	static float OutQuint( float time, float duration = 1.0f )
 	{
-		return ( ( time = time / duration - 1 ) * time * time * time * time + 1 );
+		time = time / duration - 1;
+		return ( time * time * time * time * time + 1 );
 	}
 
 	static float InOutQuint( float time, float duration = 1.0f )
 	{
-		if ( ( time /= duration * 0.5f ) < 1 ) return 0.5f * time * time * time * time * time;
-		return 0.5f * ( ( time -= 2 ) * time * time * time * time + 2 );
+		time /= duration * 0.5f;
+		if ( time < 1 )
+			return 0.5f * time * time * time * time * time;
+		time -= 2;
+		return 0.5f * ( time * time * time * time * time + 2 );
 	}
 
 	static float InExpo( float time, float duration = 1.0f )
 	{
-		return ( time == 0 ) ? 0 : ( float ) FMath::Pow( 2, 10 * ( time / duration - 1 ) );
+		return ( time == 0 ) ? 0 : ( float )FMath::Pow( 2, 10 * ( time / duration - 1 ) );
 	}
 
 	static float OutExpo( float time, float duration = 1.0f )
 	{
-		if ( time == duration ) return 1;
+		if ( time == duration )
+			return 1;
 		return ( -( float ) FMath::Pow( 2, -10 * time / duration ) + 1 );
 	}
 
 	static float InOutExpo( float time, float duration = 1.0f )
 	{
-		if ( time == 0 ) return 0;
-		if ( time == duration ) return 1;
-		if ( ( time /= duration * 0.5f ) < 1 ) return 0.5f * ( float ) FMath::Pow( 2, 10 * ( time - 1 ) );
-		return 0.5f * ( -( float ) FMath::Pow( 2, -10 * --time ) + 2 );
+		if ( time == 0 )
+			return 0;
+		if ( time == duration )
+			return 1;
+		time /= duration;
+		if ( ( time * 0.5f ) < 1 )
+			return 0.5f * ( float )FMath::Pow( 2, 10 * ( time - 1 ) );
+		--time;
+		return 0.5f * ( -( float ) FMath::Pow( 2, -10 * time ) + 2 );
 	}
 
 	static float InCirc( float time, float duration = 1.0f )
 	{
-		return -( ( float ) FMath::Sqrt( 1 - ( time /= duration ) * time ) - 1 );
+		time /= duration;
+		return -( ( float ) FMath::Sqrt( 1 - time * time ) - 1 );
 	}
 
 	static float OutCirc( float time, float duration = 1.0f )
 	{
-		return ( float ) FMath::Sqrt( 1 - ( time = time / duration - 1 ) * time );
+		time = time / duration - 1;
+		return ( float ) FMath::Sqrt( 1 - time * time );
 	}
 
 	static float InOutCirc( float time, float duration = 1.0f )
 	{
-		if ( ( time /= duration * 0.5f ) < 1 ) return -0.5f * ( ( float ) FMath::Sqrt( 1 - time * time ) - 1 );
-		return 0.5f * ( ( float ) FMath::Sqrt( 1 - ( time -= 2 ) * time ) + 1 );
+		time /= duration * 0.5f;
+		if ( time < 1 )
+			return -0.5f * ( ( float ) FMath::Sqrt( 1 - time * time ) - 1 );
+		time -= 2;
+		return 0.5f * ( ( float ) FMath::Sqrt( 1 - time * time ) + 1 );
 	}
 
 	static float InElastic( float time, float duration = 1.0f, float overshootOrAmplitude = 0.1f, float period = 1.0f )
@@ -215,14 +246,16 @@ public:
 			s0 = period / 4;
 		}
 		else s0 = period / TWO_PI * ( float ) FMath::Asin( 1 / overshootOrAmplitude );
-		return -( overshootOrAmplitude * ( float ) FMath::Pow( 2, 10 * ( time -= 1 ) ) * ( float ) FMath::Sin( ( time * duration - s0 ) * TWO_PI / period ) );
+		time -= 1;
+		return -( overshootOrAmplitude * ( float ) FMath::Pow( 2, 10 * time ) * ( float ) FMath::Sin( ( time * duration - s0 ) * TWO_PI / period ) );
 	}
 
 	static float OutElastic( float time, float duration = 1.0f, float overshootOrAmplitude = 0.1f, float period = 1.0f )
 	{
 		float s1;
 		if ( time == 0 ) return 0;
-		if ( ( time /= duration ) == 1 ) return 1;
+		time /= duration;
+		if ( time == 1 ) return 1;
 		if ( period == 0 ) period = duration * 0.3f;
 		if ( overshootOrAmplitude < 1 ) {
 			overshootOrAmplitude = 1;
@@ -236,31 +269,40 @@ public:
 	{
 		float s;
 		if ( time == 0 ) return 0;
-		if ( ( time /= duration * 0.5f ) == 2 ) return 1;
+		time /= duration * 0.5f;
+		if ( time == 2 ) return 1;
 		if ( period == 0 ) period = duration * ( 0.3f * 1.5f );
 		if ( overshootOrAmplitude < 1 ) {
 			overshootOrAmplitude = 1;
 			s = period / 4;
 		}
 		else s = period / TWO_PI * ( float ) FMath::Asin( 1 / overshootOrAmplitude );
-		if ( time < 1 ) return -0.5f * ( overshootOrAmplitude * ( float ) FMath::Pow( 2, 10 * ( time -= 1 ) ) * ( float ) FMath::Sin( ( time * duration - s ) * TWO_PI / period ) );
-		return overshootOrAmplitude * ( float ) FMath::Pow( 2, -10 * ( time -= 1 ) ) * ( float ) FMath::Sin( ( time * duration - s ) * TWO_PI / period ) * 0.5f + 1;
+		time -= 1;
+		if ( time < 1 )
+			return -0.5f * ( overshootOrAmplitude * ( float ) FMath::Pow( 2, 10 * time ) * ( float ) FMath::Sin( ( time * duration - s ) * TWO_PI / period ) );
+		return overshootOrAmplitude * ( float ) FMath::Pow( 2, -10 * time ) * ( float ) FMath::Sin( ( time * duration - s ) * TWO_PI / period ) * 0.5f + 1;
 	}
 
 	static float InBack( float time, float duration = 1.0f, float overshootOrAmplitude = 0.1f, float period = 1.0f )
 	{
-		return ( time /= duration ) * time * ( ( overshootOrAmplitude + 1 ) * time - overshootOrAmplitude );
+		time /= duration;
+		return time * time * ( ( overshootOrAmplitude + 1 ) * time - overshootOrAmplitude );
 	}
 
 	static float OutBack( float time, float duration = 1.0f, float overshootOrAmplitude = 0.1f, float period = 1.0f )
 	{
-		return ( ( time = time / duration - 1 ) * time * ( ( overshootOrAmplitude + 1 ) * time + overshootOrAmplitude ) + 1 );
+		time = time / duration - 1;
+		return ( time * time * ( ( overshootOrAmplitude + 1 ) * time + overshootOrAmplitude ) + 1 );
 	}
 
 	static float InOutBack( float time, float duration = 1.0f, float overshootOrAmplitude = 0.1f, float period = 1.0f )
 	{
-		if ( ( time /= duration * 0.5f ) < 1 ) return 0.5f * ( time * time * ( ( ( overshootOrAmplitude *= ( 1.525f ) ) + 1 ) * time - overshootOrAmplitude ) );
-		return 0.5f * ( ( time -= 2 ) * time * ( ( ( overshootOrAmplitude *= ( 1.525f ) ) + 1 ) * time + overshootOrAmplitude ) + 2 );
+		time /= duration * 0.5f;
+		overshootOrAmplitude *= 1.525f;
+		if ( time < 1 )
+			return 0.5f * ( time * time * ( ( overshootOrAmplitude + 1 ) * time - overshootOrAmplitude ) );
+		time -= 2;
+		return 0.5f * ( time * time * ( ( overshootOrAmplitude + 1 ) * time + overshootOrAmplitude ) + 2 );
 	}
 
 };
