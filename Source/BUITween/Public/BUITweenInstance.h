@@ -6,6 +6,8 @@
 
 DECLARE_DELEGATE_OneParam( FBUITweenSignature, UWidget* /*Owner*/ );
 
+BUITWEEN_API DECLARE_LOG_CATEGORY_EXTERN(LogBUITween, Log, All);
+
 template<typename T>
 class TBUITweenProp
 {
