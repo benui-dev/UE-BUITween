@@ -26,6 +26,7 @@ void FBUITweenInstance::Begin()
 	// Set all the props to the existng state
 	TranslationProp.OnBegin( pWidget->RenderTransform.Translation );
 	ScaleProp.OnBegin( pWidget->RenderTransform.Scale );
+	RotationProp.OnBegin( pWidget->RenderTransform.Angle );
 	OpacityProp.OnBegin( pWidget->GetRenderOpacity() );
 
 	{
