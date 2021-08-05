@@ -22,7 +22,7 @@ void UBUITween::Shutdown()
 
 FBUITweenInstance& UBUITween::Create( UWidget* pInWidget, float InDuration, float InDelay, bool bIsAdditive )
 {
-	// By default let's kill any existing tweens 
+	// By default let's kill any existing tweens
 	if ( !bIsAdditive )
 	{
 		Clear( pInWidget );
@@ -39,14 +39,14 @@ FBUITweenInstance& UBUITween::Create( UWidget* pInWidget, float InDuration, floa
 int32 UBUITween::Clear( UWidget* pInWidget )
 {
 	int32 NumRemoved = 0;
-	for ( int32 i = ActiveInstances.Num() - 1; i >= 0; --i )
-	{
-		if ( ActiveInstances[ i ].GetWidget().IsValid() && ActiveInstances[ i ].GetWidget() == pInWidget )
-		{
-			ActiveInstances.RemoveAt( i );
-			NumRemoved++;
-		}
-	}
+
+	auto DoesTweenMatchWidgetFn = [pInWidget](const FBUITweenInstance& CurTweenInstance) -> bool {
+		return ( CurTweenInstance.GetWidget().IsValid() && CurTweenInstance.GetWidget() == pInWidget );
+	};
+
+	NumRemoved += ActiveInstances.RemoveAll(DoesTweenMatchWidgetFn);
+	NumRemoved += InstancesToAdd.RemoveAll(DoesTweenMatchWidgetFn);
+
 	return NumRemoved;
 }
 

@@ -7,9 +7,10 @@
 #include "Components/OverlaySlot.h"
 #include "Components/VerticalBoxSlot.h"
 #include "Components/HorizontalBoxSlot.h"
-#include "Components/Sizebox.h"
+#include "Components/SizeBox.h"
 #include "Blueprint/UserWidget.h"
 
+DEFINE_LOG_CATEGORY(LogBUITween);
 
 void FBUITweenInstance::Begin()
 {
@@ -19,7 +20,7 @@ void FBUITweenInstance::Begin()
 
 	if ( !pWidget.IsValid() )
 	{
-		UE_LOG( LogTemp, Warning, TEXT( "Trying to start invalid widget" ) );
+		UE_LOG( LogBUITween, Warning, TEXT( "Trying to start invalid widget" ) );
 		return;
 	}
 
