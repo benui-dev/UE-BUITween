@@ -25,20 +25,27 @@ UBUITween::Create( MyWidget, TweenDuration, StartDelay )
 	.FromTranslation( FVector2D( -100, 0 ) )
 	.FromOpacity( 0.2f )
 	.ToReset()
-	.Easing( EEasingType::OutCubic )
+	.Easing( EBUIEasingType::OutCubic )
 	.Begin();
 ```
 
 Parameters available:
 
-* **Translation** `ToTranslation(FVector2D)`/`FromTranslation(FVector2D)`
-* **Scale** `ToScale(FVector2D)`/`FromScale(FVector2D)`
-* **Rotation** `ToRotation(float)`/`FromRotation(float)`
-* **Opacity** `ToOpacity(float)`/`FromOpacity(float)`
-* **Color** `ToColor(FLinearColor)`/`FromColor(FLinearColor)`
-* **Visibility** `ToVisibility(ESlateVisibility)`/`FromVisibility(ESlateVisibility)`
-* **Canvas Position**
-* **SizeBox max height**
+| Property | From | To |
+| --- | --- | --- |
+| **Translation**         | `FromTranslation( FVector2D)`         | `ToTranslation( FVector2D )` |
+| **Scale**               | `FromScale( FVector2D )`              | `ToScale( FVector2D )` |
+| **Rotation**            | `FromRotation( float )`               | `ToRotation( float )` |
+| **Opacity**             | `FromOpacity( float )`                | `ToOpacity( float )` |
+| **Color**               | `FromColor( FLinearColor )`           | `ToColor( FLinearColor )` |
+| **Visibility**          | `FromVisibility( ESlateVisibility )`  | `ToVisibility( ESlateVisibility )` |
+| **Canvas Position**     | `FromCanvasPosition( FVector2D )`     | `ToCanvasPosition( FVector2D )` |
+| **SizeBox Max Height**  | `FromMaxDesiredHeight( float )`       | `ToMaxDesiredHeight( float )` |
+| **Slot Padding**        | `FromPadding( FMargin )`              | `ToPadding( FMargin )` |
+
+Other helper functions:
+
+* `ToReset()`
 
 ## Callbacks
 
