@@ -1,15 +1,10 @@
-# UI Tweening Libary for UE4/UMG
+# UI Tweening Libary for Unreal Engine's UMG
 
 Create simple tweens for UMG widgets from C++ and BP.
 
-```cpp
-UBUITween::Create( SomeWidget, 0.2f )
-	.FromTranslation( FVector2D( -100, 0 ) )
-	.FromOpacity( 0.2f )
-	.ToTranslation( FVector2D( 20, 10 ) )
-	.ToOpacity( 1.0f )
-	.Begin();
-```
+https://user-images.githubusercontent.com/26211033/137335549-8e20eefa-bf7f-4415-af83-bf68cabe9b1c.mp4
+
+
 ## Compatible engine versions
 
 The plugin was tested to work in 4.27. However, the functions are rather simple,
@@ -21,7 +16,18 @@ much hassle.
 
 While UMG's timeline animator is serviceable for prototyping UI animations, or used
 as is for fixed animations, it lacks the flexibility to animate more modular,
-procedurally built widgets (e.g. Inventory list, commands menu, etc.).
+procedurally built widgets (e.g. Inventory list, commands menu, etc.) dynamically.
+
+For one thing, UMG Timeline can't expose animatable properties it controls to code.
+This could be a problem if your animation needs to be adapting to prior interactions
+(e.g. zooming in from / out to where a button is located on screen). It can also be
+difficult to reuse in a different context, requiring to make a different sequence
+for another possible context. Code driven tweening aims to solve that, by having
+start point and end point properties exposed to code, and tweens to be reused as
+functions or macro, allowing for more dynamic animations.
+
+Of course, you can combine the best of both worlds, to achieve cool looking widget
+animations.
 
 ## Usage in C++
 
@@ -149,3 +155,4 @@ For more updated list of issues, see the [Issues page](https://github.com/TheHoo
 If you find it useful, drop me a line [@_benui](https://twitter.com/_benui) on Twitter
 
 [benui.ca](https://benui.ca)
+**
