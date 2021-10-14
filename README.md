@@ -1,6 +1,6 @@
 # UI Tweening Libary for UE4/UMG
 
-Create simple tweens for UMG widgets from C++.
+Create simple tweens for UMG widgets from C++ and BP.
 
 ```cpp
 UBUITween::Create( SomeWidget, 0.2f )
@@ -12,7 +12,7 @@ UBUITween::Create( SomeWidget, 0.2f )
 ```
 
 
-## Usage
+## Usage in C++
 
 The plugin module registers itself to tick automatically even during game-world
 pause.
@@ -62,11 +62,18 @@ UBUITween::Create( MyWidget, 0.5f )
 
 For the full API, check the source code.
 
+## Usage in Blueprints
 
-## Caveats
+(exposed to BP by TheHoodieGuy02)
 
-* I haven't performance-tested it beyond having 5-6 tweens running simultaneously.
-* No Blueprint support.
+To use the widget tweening functions in BP, simply reparent your widget BP to
+BUITweenWidget class. This User Widget class exposes the CreateTween function
+to Blueprint, and also provides a struct for the parameters that CreateTween
+needs.
+
+## Caveats and Issues
+
+For more updated list of issues, see the [Issues page](https://github.com/TheHoodieGuy02/UE4-UITween/issues).
 
 ## License
 
