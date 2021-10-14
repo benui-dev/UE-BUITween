@@ -90,6 +90,9 @@ Tween needs.
 
 ![](ReadmeFiles/CreateWidgetTween.png)
 
+Please note that the animation will be executed in the tween instance's own C++
+tick thread, therefore, do not execute this on Blueprint tick / every frame.
+
 - Target Widget is the widget that you want to apply the tween on.
 Expects a Widget Object.
 
