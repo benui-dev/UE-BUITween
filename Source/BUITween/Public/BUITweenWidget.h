@@ -94,6 +94,8 @@ public:
 
 	/**
 	 Creates a tween instance for the specified widget.
+
+	 The animation will be executed in the tween instance's own C++ tick, therefore, do not execute this node on Blueprint tick/every frame.
 	*/
 	UFUNCTION(BlueprintCallable)
 	void CreateWidgetTween(UWidget* TargetWidget,
