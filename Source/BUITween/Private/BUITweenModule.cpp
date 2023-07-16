@@ -28,4 +28,3 @@ void FBUITweenModule::Tick( float DeltaTime )
 #undef LOCTEXT_NAMESPACE
 	
 IMPLEMENT_MODULE(FBUITweenModule, BUITween)
-

@@ -299,4 +299,3 @@ protected:
 	bool bHasPlayedStartEvent = false;
 	bool bHasPlayedCompleteEvent = false;
 };
-

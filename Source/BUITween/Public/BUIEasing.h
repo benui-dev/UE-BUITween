@@ -40,7 +40,7 @@ enum class EBUIEasingType
 struct FBUIEasing
 {
 public:
-	#define TWO_PI          (6.28318530717f)
+	#define BUI_TWO_PI          (6.28318530717f)
 
 	static float Ease( EBUIEasingType Type, float time, float duration = 1.0f, float overshootOrAmplitude = 0.1f, float period = 1.0f )
 	{
@@ -245,9 +245,9 @@ public:
 			overshootOrAmplitude = 1;
 			s0 = period / 4;
 		}
-		else s0 = period / TWO_PI * ( float ) FMath::Asin( 1 / overshootOrAmplitude );
+		else s0 = period / BUI_TWO_PI * ( float ) FMath::Asin( 1 / overshootOrAmplitude );
 		time -= 1;
-		return -( overshootOrAmplitude * ( float ) FMath::Pow( 2, 10 * time ) * ( float ) FMath::Sin( ( time * duration - s0 ) * TWO_PI / period ) );
+		return -( overshootOrAmplitude * ( float ) FMath::Pow( 2, 10 * time ) * ( float ) FMath::Sin( ( time * duration - s0 ) * BUI_TWO_PI / period ) );
 	}
 
 	static float OutElastic( float time, float duration = 1.0f, float overshootOrAmplitude = 0.1f, float period = 1.0f )
@@ -261,8 +261,8 @@ public:
 			overshootOrAmplitude = 1;
 			s1 = period / 4;
 		}
-		else s1 = period / TWO_PI * ( float ) FMath::Asin( 1 / overshootOrAmplitude );
-		return ( overshootOrAmplitude * ( float ) FMath::Pow( 2, -10 * time ) * ( float ) FMath::Sin( ( time * duration - s1 ) * TWO_PI / period ) + 1 );
+		else s1 = period / BUI_TWO_PI * ( float ) FMath::Asin( 1 / overshootOrAmplitude );
+		return ( overshootOrAmplitude * ( float ) FMath::Pow( 2, -10 * time ) * ( float ) FMath::Sin( ( time * duration - s1 ) * BUI_TWO_PI / period ) + 1 );
 	}
 
 	static float InOutElastic( float time, float duration = 1.0f, float overshootOrAmplitude = 0.1f, float period = 1.0f )
@@ -276,11 +276,11 @@ public:
 			overshootOrAmplitude = 1;
 			s = period / 4;
 		}
-		else s = period / TWO_PI * ( float ) FMath::Asin( 1 / overshootOrAmplitude );
+		else s = period / BUI_TWO_PI * ( float ) FMath::Asin( 1 / overshootOrAmplitude );
 		time -= 1;
 		if ( time < 1 )
-			return -0.5f * ( overshootOrAmplitude * ( float ) FMath::Pow( 2, 10 * time ) * ( float ) FMath::Sin( ( time * duration - s ) * TWO_PI / period ) );
-		return overshootOrAmplitude * ( float ) FMath::Pow( 2, -10 * time ) * ( float ) FMath::Sin( ( time * duration - s ) * TWO_PI / period ) * 0.5f + 1;
+			return -0.5f * ( overshootOrAmplitude * ( float ) FMath::Pow( 2, 10 * time ) * ( float ) FMath::Sin( ( time * duration - s ) * BUI_TWO_PI / period ) );
+		return overshootOrAmplitude * ( float ) FMath::Pow( 2, -10 * time ) * ( float ) FMath::Sin( ( time * duration - s ) * BUI_TWO_PI / period ) * 0.5f + 1;
 	}
 
 	static float InBack( float time, float duration = 1.0f, float overshootOrAmplitude = 0.1f, float period = 1.0f )
@@ -307,4 +307,4 @@ public:
 
 };
 
-#undef TWO_PI
+#undef BUI_TWO_PI

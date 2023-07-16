@@ -25,26 +25,26 @@ void FBUITweenInstance::Begin()
 	}
 
 	// Set all the props to the existng state
-	TranslationProp.OnBegin( pWidget->RenderTransform.Translation );
-	ScaleProp.OnBegin( pWidget->RenderTransform.Scale );
-	RotationProp.OnBegin( pWidget->RenderTransform.Angle );
+	TranslationProp.OnBegin( pWidget->GetRenderTransform().Translation );
+	ScaleProp.OnBegin( pWidget->GetRenderTransform().Scale );
+	RotationProp.OnBegin( pWidget->GetRenderTransform().Angle );
 	OpacityProp.OnBegin( pWidget->GetRenderOpacity() );
 
 	{
 		UUserWidget* UW = Cast<UUserWidget>( pWidget );
 		if ( UW )
 		{
-			ColorProp.OnBegin( UW->ColorAndOpacity );
+			ColorProp.OnBegin( UW->GetColorAndOpacity() );
 		}
 		UImage* UI = Cast<UImage>( pWidget );
 		if ( UI )
 		{
-			ColorProp.OnBegin( UI->ColorAndOpacity );
+			ColorProp.OnBegin( UI->GetColorAndOpacity() );
 		}
 		UBorder* Border = Cast<UBorder>( pWidget );
 		if ( Border )
 		{
-			ColorProp.OnBegin( Border->ContentColorAndOpacity );
+			ColorProp.OnBegin( Border->GetContentColorAndOpacity() );
 		}
 	}
 
@@ -61,32 +61,32 @@ void FBUITweenInstance::Begin()
 	if ( OverlaySlot )
 	{
 		PaddingProp.OnBegin( FVector4(
-			OverlaySlot->Padding.Left,
-			OverlaySlot->Padding.Top,
-			OverlaySlot->Padding.Bottom,
-			OverlaySlot->Padding.Right ) );
+			OverlaySlot->GetPadding().Left,
+			OverlaySlot->GetPadding().Top,
+			OverlaySlot->GetPadding().Bottom,
+			OverlaySlot->GetPadding().Right ) );
 	}
 	else if ( HorizontalBoxSlot )
 	{
 		PaddingProp.OnBegin( FVector4(
-			HorizontalBoxSlot->Padding.Left,
-			HorizontalBoxSlot->Padding.Top,
-			HorizontalBoxSlot->Padding.Bottom,
-			HorizontalBoxSlot->Padding.Right ) );
+			HorizontalBoxSlot->GetPadding().Left,
+			HorizontalBoxSlot->GetPadding().Top,
+			HorizontalBoxSlot->GetPadding().Bottom,
+			HorizontalBoxSlot->GetPadding().Right ) );
 	}
 	else if ( VerticalBoxSlot )
 	{
 		PaddingProp.OnBegin( FVector4(
-			VerticalBoxSlot->Padding.Left,
-			VerticalBoxSlot->Padding.Top,
-			VerticalBoxSlot->Padding.Bottom,
-			VerticalBoxSlot->Padding.Right ) );
+			VerticalBoxSlot->GetPadding().Left,
+			VerticalBoxSlot->GetPadding().Top,
+			VerticalBoxSlot->GetPadding().Bottom,
+			VerticalBoxSlot->GetPadding().Right ) );
 	}
 
 	USizeBox* SizeBox = Cast<USizeBox>( pWidget );
 	if ( SizeBox )
 	{
-		MaxDesiredHeightProp.OnBegin( SizeBox->MaxDesiredHeight );
+		MaxDesiredHeightProp.OnBegin( SizeBox->GetMaxDesiredHeight() );
 	}
 
 	// Apply the starting conditions, even if we delay
@@ -173,7 +173,7 @@ void FBUITweenInstance::Apply( float EasedAlpha )
 	}
 
 	bool bChangedRenderTransform = false;
-	FWidgetTransform CurrentTransform = Target->RenderTransform;
+	FWidgetTransform CurrentTransform = Target->GetRenderTransform();
 
 	if ( TranslationProp.IsSet() )
 	{
