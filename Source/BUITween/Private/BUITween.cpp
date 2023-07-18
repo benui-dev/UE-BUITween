@@ -61,7 +61,7 @@ void UBUITween::Update( float DeltaTime )
 		if ( Inst.IsComplete() )
 		{
 			FBUITweenInstance CompleteInst = Inst;
-			ActiveInstances.RemoveAt( i );
+			ActiveInstances.RemoveAtSwap( i );
 
 			// We do this here outside of the instance update and after removing from active instances because we
 			// don't know if the callback in the cleanup is going to trigger adding more events
@@ -69,10 +69,7 @@ void UBUITween::Update( float DeltaTime )
 		}
 	}
 
-	for ( int32 i = 0; i < InstancesToAdd.Num(); ++i )
-	{
-		ActiveInstances.Add( InstancesToAdd[ i ] );
-	}
+	ActiveInstances.Append(MoveTemp(InstancesToAdd));
 	InstancesToAdd.Empty();
 }
 
