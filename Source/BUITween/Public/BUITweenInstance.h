@@ -5,6 +5,7 @@
 #include "BUITweenInstance.generated.h"
 
 DECLARE_DELEGATE_OneParam( FBUITweenSignature, UWidget* /*Owner*/ );
+DECLARE_DYNAMIC_DELEGATE_OneParam( FBUITweenBPSignature, UWidget*, Owner );
 
 BUITWEEN_API DECLARE_LOG_CATEGORY_EXTERN(LogBUITween, Log, All);
 
@@ -250,6 +251,17 @@ public:
 		return *this;
 	}
 
+	FBUITweenInstance& OnStart( const FBUITweenBPSignature& InOnStart )
+	{
+		OnStartedBPDelegate = InOnStart;
+		return *this;
+	}
+	FBUITweenInstance& OnComplete( const FBUITweenBPSignature& InOnComplete )
+	{
+		OnCompleteBPDelegate = InOnComplete;
+		return *this;
+	}
+
 	FBUITweenInstance& ToReset()
 	{
 		ScaleProp.SetTarget( FVector2D::UnitVector );
@@ -267,6 +279,7 @@ public:
 		if ( !bHasPlayedCompleteEvent )
 		{
 			OnCompleteDelegate.ExecuteIfBound( pWidget.Get() );
+			OnCompleteBPDelegate.ExecuteIfBound( pWidget.Get() );
 			bHasPlayedCompleteEvent = true;
 		}
 	}
@@ -295,6 +308,9 @@ protected:
 
 	FBUITweenSignature OnStartedDelegate;
 	FBUITweenSignature OnCompleteDelegate;
+
+	FBUITweenBPSignature OnStartedBPDelegate;
+	FBUITweenBPSignature OnCompleteBPDelegate;
 
 	bool bHasPlayedStartEvent = false;
 	bool bHasPlayedCompleteEvent = false;

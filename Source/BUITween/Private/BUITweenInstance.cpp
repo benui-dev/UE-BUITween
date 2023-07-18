@@ -115,6 +115,7 @@ void FBUITweenInstance::Update( float DeltaTime )
 	if ( !bHasPlayedStartEvent )
 	{
 		OnStartedDelegate.ExecuteIfBound( pWidget.Get() );
+		OnStartedBPDelegate.ExecuteIfBound( pWidget.Get() );
 		bHasPlayedStartEvent = true;
 	}
 
