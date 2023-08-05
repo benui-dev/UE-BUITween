@@ -3,8 +3,8 @@
 #include "CoreMinimal.h"
 #include "CoreUObject.h"
 
-UENUM()
-enum class EBUIEasingType
+UENUM(BlueprintType)
+enum class EBUIEasingType : uint8
 {
 	Linear,
 	Smoothstep,

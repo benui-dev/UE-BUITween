@@ -1,18 +1,35 @@
-# UI Tweening Libary for UE4/UMG
+# UI Tweening Libary for Unreal Engine's UMG
 
-Create simple tweens for UMG widgets from C++.
+Create simple tweens for UMG widgets from C++ and BP.
 
-```cpp
-UBUITween::Create( SomeWidget, 0.2f )
-	.FromTranslation( FVector2D( -100, 0 ) )
-	.FromOpacity( 0.2f )
-	.ToTranslation( FVector2D( 20, 10 ) )
-	.ToOpacity( 1.0f )
-	.Begin();
-```
+https://user-images.githubusercontent.com/26211033/137335549-8e20eefa-bf7f-4415-af83-bf68cabe9b1c.mp4
 
 
-## Usage
+## Compatible engine versions
+
+The plugin was tested to work in 4.27. However, the functions are rather simple,
+it is expected to work on at least far back as Unreal Engine 4.5.
+It has yet been tested in Unreal Engine 5, but should also work right away without
+much hassle.
+
+## Why using code tweening and not the UMG timeline?
+
+While UMG's timeline animator is serviceable for prototyping UI animations, or used
+as is for fixed animations, it lacks the flexibility to animate more modular,
+procedurally built widgets (e.g. Inventory list, commands menu, etc.) dynamically.
+
+For one thing, UMG Timeline can't expose animatable properties it controls to code.
+This could be a problem if your animation needs to be adapting to prior interactions
+(e.g. zooming in from / out to where a button is located on screen). It can also be
+difficult to reuse in a different context, requiring to make a different sequence
+for another possible context. Code driven tweening aims to solve that, by having
+start point and end point properties exposed to code, and tweens to be reused as
+functions or macro, allowing for more dynamic animations.
+
+Of course, you can combine the best of both worlds, to achieve cool looking widget
+animations.
+
+## Usage in C++
 
 The plugin module registers itself to tick automatically even during game-world
 pause.
@@ -62,11 +79,75 @@ UBUITween::Create( MyWidget, 0.5f )
 
 For the full API, check the source code.
 
+## Usage in Blueprints
 
-## Caveats
+(exposed to BP by TheHoodieGuy02)
 
-* I haven't performance-tested it beyond having 5-6 tweens running simultaneously.
-* No Blueprint support.
+To use the widget tweening functions in BP, simply reparent your widget BP to
+BUITweenWidget class. This User Widget class exposes the Create Widget Tween
+to Blueprint, and also provides a struct for the parameters that Create Widget
+Tween needs.
+
+![](ReadmeFiles/CreateWidgetTween.png)
+
+Please note that the animation will be executed in the tween instance's own C++
+tick thread, therefore, do not execute this on Blueprint tick / every frame.
+
+- Target Widget is the widget that you want to apply the tween on.
+Expects a Widget Object.
+
+- Tween Duration is the duration for the tween to last, in seconds.
+Expects float value.
+
+- Start Delay is the length of for the tween pausing at the start point, before
+interpolating to the end point.
+Expects float value.
+
+- Start Appearance is the start point parameter of the transforms.
+Expects WidgetAppearance struct.
+
+- End Appearance is the end point parameter of the transforms.
+Expects WidgetAppearance struct.
+
+- Easing Type is the interpolation type for the tween.
+Expects BUI Easing Type enum.
+
+![](ReadmeFiles/WidgetAppearanceStruct.png)
+
+The WidgetAppearance struct contains parameters that control how the widget appears in
+the viewport. Some parameters only available to certain widget types, however, Create
+Widget Tween function already do the casting and they'll be unused if the cast fails.
+
+- Translation corresponds to the widget's render translation.
+Widget type agnostic.
+
+- Rotation corresponds to the widget's render rotation.
+Widget type agnostic.
+
+- Scale corresponds to the widget's render scale.
+Widget type agnostic.
+
+- Opacity corresponds to the widget's render opacity.
+Widget type agnostic.
+
+- Color corresponds to the widget's content color.
+Applicable to User Widget, Image, and Border widgets.
+
+- Canvas Position corresponds to the widget's position relative to Canvas Panel parent.
+Applicable to widgets in a Canvas Panel.
+
+- Widget Visibility corresponds to the widget's visibility type.
+Widget type agnostic.
+
+- Max Desired Height corresponds to the widget's desired height limit.
+Applicable to Size Box widgets.
+
+- Widget Padding corresponds to the widget's padding in flowing containers.
+Applicable to widgets in an Overlay, Vertical Box, or Vertical Box.
+
+## Caveats and Issues
+
+For more updated list of issues, see the [Issues page](https://github.com/TheHoodieGuy02/UE4-UITween/issues).
 
 ## License
 
@@ -77,3 +158,4 @@ For the full API, check the source code.
 If you find it useful, drop me a line [@_benui](https://twitter.com/_benui) on Twitter
 
 [benui.ca](https://benui.ca)
+**
