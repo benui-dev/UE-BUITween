@@ -29,31 +29,31 @@ struct FWidgetAppearance
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BUITween")
-	FVector2D Translation;
+	FVector2D Translation = FVector2D(0,0);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BUITween")
-	float Rotation;
+	float Rotation = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BUITween")
-	FVector2D Scale;
+	FVector2D Scale = FVector2D(1,1);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BUITween")
-	float Opacity;
+	float Opacity = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BUITween")
-	FLinearColor Color;
+	FLinearColor Color = FLinearColor::White;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BUITween")
-	FVector2D CanvasPosition;
+	FVector2D CanvasPosition = FVector2D(0,0);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BUITween")
-	ESlateVisibility WidgetVisibility;
+	ESlateVisibility WidgetVisibility = ESlateVisibility::Visible;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BUITween")
-	float MaxDesiredHeight;
+	float MaxDesiredHeight = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BUITween")
-	FMargin WidgetPadding;
+	FMargin WidgetPadding = FMargin(0,0,0,0);
 
 	FWidgetAppearance()
 	{
@@ -72,7 +72,14 @@ struct FWidgetAppearance
 		FMargin Padding
 	)
 	{
-
+		this->Translation = Translation;
+		this->Rotation = Rotation;
+		this->Scale = Scale;
+		this->Opacity = Opacity;
+		this->Color = Color;
+		this->CanvasPosition = CanvasPosition;
+		this->WidgetVisibility = Visibility;
+		this->WidgetPadding = Padding;
 	}
 };
 
